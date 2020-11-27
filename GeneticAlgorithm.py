@@ -2,6 +2,7 @@
 #options=["-L","0.3", "-M", "0.2", "-N", "500", "-V", "0", "-S", "0", "-E", "20", "-H", "5"]
 import os
 import sys
+
 sys.path
 sys.path.append("/usr/lib/jvm/java-11-openjdk-amd64/bin/")
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-11-openjdk-amd64/"
@@ -50,18 +51,11 @@ def fitness(toeval : Individual):
 def randIndividual():
     return Individual(0.3, 0.2, 500, [5])  #falta hacerlo random
 
-def GA(Fitness_threshold : float, P : int, R : float, M : int):
-    population=[]
-    for i in range(P):
-        population.append(randIndividual())
-    for element in population:
-        element.FitnessValue=fitness(element)
 
-    
 ind=Individual(0.3, 0.2, 500, [5,5])
 
 ind.FitnessValue=fitness(ind)
 
 print(ind.FitnessValue)
-print("cambios cambios")
+
 jvm.stop()
