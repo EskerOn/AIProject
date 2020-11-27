@@ -63,5 +63,5 @@ ind=Individual(0.3, 0.2, 500, [5,5])
 ind.FitnessValue=fitness(ind)
 
 print(ind.FitnessValue)
-print(cambios cambios)
+print("cambios cambios")
 jvm.stop()
