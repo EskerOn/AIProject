@@ -24,7 +24,7 @@ class Individual:
 
 
 loader = Loader("weka.core.converters.ArffLoader")
-data = loader.load_file("Mydata/Database/WekaFiles/iris.arff")
+data = loader.load_file("AIProject/Database/WekaFiles/iris.arff")
 data.class_is_last()
 remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
 
