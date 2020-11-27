@@ -29,7 +29,7 @@ data.class_is_last()
 remove = Filter(classname="weka.filters.unsupervised.attribute.Remove", options=["-R", "1-3"])
 
 def fitness(toeval : Individual):
-    cls = Classifier(classname="weka.classifiers.functions.MultilayerPerceptron", options=toeval.settings)
+    cls = Classifier(classname="weka.classifiers.functions.MultilayerPerceptron", options=toeval.settings())
     fc = FilteredClassifier()
     fc.filter = remove
     fc.classifier = cls
@@ -49,7 +49,7 @@ def GA(Fitness_threshold : float, P : int, R : float, M : int):
         element.FitnessValue=fitness(element)
 
     
-ind=Individual(0.3, 0.2, 500, [5])
+ind=Individual(0.3, 0.2, 500, [5,5])
 
 ind.FitnessValue=fitness(ind)
 
