@@ -72,6 +72,7 @@ class GeneticA():
             genes = genes >> self.SD[4-i][1]
         for i in range(5):
             if out[i]>self.SD[i][0]:
+                print("------------------------fuera de rango {} ".format(out[i]))
                 out[i]=self.SD[i][0]
         return out
 
