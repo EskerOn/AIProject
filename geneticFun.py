@@ -1,4 +1,21 @@
 import random
+
+###Temporal para hacer pruebas
+class Individual:
+    def __init__(self, LearningR : float, Momentum : float, Period : int, HiddenLayers : list):
+        self.LearningR = LearningR
+        self.Momentum = Momentum
+        self.Period = Period
+        self.HiddenLayers = HiddenLayers
+        self.FitnessValue = None
+        self.GeneticForm = None
+    def settings(self):
+        Hlayers = ','.join(map(str, self.HiddenLayers)) 
+        return ["-L",str(self.LearningR), "-M", str(self.Momentum), "-N", str(self.Period), "-V", "0", "-S", "0", "-E", "20", "-H", Hlayers]
+    def __str__(self):
+        Hlayers = ','.join(map(str, self.HiddenLayers)) 
+        return 'options=["-L","{}", "-M", "{}", "-N", "{}", "-V", "0", "-S", "0", "-E", "20", "-H", "{}"]'.format(self.LearningR, self.Momentum, self.Period, Hlayers)
+
 #Formato de genético
 #list[x, y, z, v, w] : los rangos están de 0 a N y todos son int
 # x neuronas x capa
@@ -19,10 +36,7 @@ import random
 |   etapas                  |       x
 """
 
-def fitness(self, data : list): #trabaja sobre el formato genético
-    #aquí, de alguna manera se hace el llamado a WEKA
-    #así que
-    #return WEKA(translate(data))
+def fitness(toeval : Individual): 
     return random.randint(0, 100)
 
 class GeneticA():
@@ -49,7 +63,9 @@ class GeneticA():
         aux = []
         for i in range(5): 
             aux.append(random.randrange(self.SD[i][0]+1))
-        return aux
+        ind=Individual(aux[2]/pow(10, self.settings[0]), aux[3]/pow(10, self.settings[0]), aux[4] + self.settings[2], [aux[0] + self.settings[5] for i in range(aux[1] + 1)])
+        ind.GeneticForm=aux
+        return ind
 
     def tobin(self, data : list):#Muestra la forma binaria del formato genético
         out = ""
@@ -74,8 +90,9 @@ class GeneticA():
             if out[i]>self.SD[i][0]:
                 print("------------------------fuera de rango {} ".format(out[i]))
                 out[i]=self.SD[i][0]
-        return out
-
+        ind=Individual(out[2]/pow(10, self.settings[0]), out[3]/pow(10, self.settings[0]), out[4] + self.settings[2], [out[0] + self.settings[5] for i in range(out[1] + 1)])
+        ind.GeneticForm=out
+        return ind
 
     def mutation(self, data : list):#Hace una mutación en un parámetro aleatorio del individuo, trabaja sobre el formato genético
         out = [i for i in data]
@@ -93,7 +110,9 @@ class GeneticA():
                 out[aux] = ((data[aux] ^ maskaux) | mask) ^ maskaux
             else:
                 out[aux] = data[aux] | mask
-        return out
+        ind=Individual(out[2]/pow(10, self.settings[0]), out[3]/pow(10, self.settings[0]), out[4] + self.settings[2], [out[0] + self.settings[5] for i in range(out[1] + 1)])
+        ind.GeneticForm=out
+        return ind
 
     def cruza(self, padre : list, madre : list):#Recibe dos formatos genéticos y devuelve uno resultado de los dos
         padres = self.tobin(padre)
@@ -105,33 +124,45 @@ class GeneticA():
         h1 = (int(padres, 2) & mask1) | (int(madres, 2) & mask2)
         h2 = (int(padres, 2) & mask2) | (int(madres, 2) & mask1)
         return self.toformgen(h1), self.toformgen(h2)
-        
 
-    """def GA(self, Fitness_threshold : float, P : int, R : float, M : int):
+    def pr(self, val):
+        return random.randint(0, 100)
+
+    def maxim(self, population):
+        maxitem=population[0]
+        for item in population:
+            if item.FitnessValue>maxitem.FitnessValue:
+                maxitem=item
+        return maxitem
+
+    def GA(self, Fitness_threshold : float, P : int, R : float, M : int, fitness):
         population=[]
         populationS=[]
         for i in range(P):
-            population.append(randIndividual())
+            population.append(self.randIndividual())
         for element in population:
             element.FitnessValue=fitness(element)
-        while():
+        iteraciones=0
+        while(iteraciones<5000):
             sample=random.sample(population, int((1-R)*P))
             for item in sample:
-                if(): ###aqui va la probabilidad Pr(hi)
+                if(self.pr(item)): ###aqui va la probabilidad Pr(hi)
                     populationS.append(item)
             pairs=[(population[i],population[j]) for i in range(len(population)) for j in range(i+1, len(population))]
             sample=random.sample(pairs, int(R*P/2))
             for item in sample:
-                if(): ###aqui va la probabilidad Pr(hi)
-                    pass ##aqui se hace el crosover
-                    ##se añaden a PopulationS
+                if(self.pr(item)): ###aqui va la probabilidad Pr(hi)
+                    h1, h2 = self.cruza(item[0].GeneticForm, item[1].GeneticForm)
+                    populationS.append(h1)
+                    populationS.append(h2)
             sample=random.sample(populationS, int(len(populationS)/100*M))
             for item in sample:
-                pass ##se aplica mutación sobre item
+                item = self.mutation(item.GeneticForm) ##se aplica mutación sobre item
             population=populationS
             for element in population:
                 element.FitnessValue=fitness(element)
-        return max(population)"""
+            iteraciones+=1
+        return self.maxim(population)
 
 MAXDEC = 2 	# Cantidad de decimales en los float
 MAXEP = 500  	# Máximo de etapas
@@ -150,18 +181,16 @@ print(aux)
 aux2 = gen.randIndividual()
 print(aux2)
 print("su representación binaria")
-print(gen.tobin(aux))
-print(gen.tobin(aux2))
+print(gen.tobin(aux.GeneticForm))
+print(gen.tobin(aux2.GeneticForm))
 print("los resultados de la cruza, no necesariamente cimplen el rango")
-h1, h2 = gen.cruza(aux, aux2)
+h1, h2 = gen.cruza(aux.GeneticForm, aux2.GeneticForm)
 print(h1)
 print(h2)
 print("su representación binaria")
-print((gen.tobin(h1)))
-print((gen.tobin(h2)))
-m1 = gen.mutation(h1)
+print((gen.tobin(h1.GeneticForm)))
+print((gen.tobin(h2.GeneticForm)))
+m1 = gen.mutation(h1.GeneticForm)
 print("mutacion del hijo 1")
 print(m1)
-print(gen.tobin(m1))
-print(gen.translate(aux))
-print(gen.translate(h1))
+print(gen.tobin(m1.GeneticForm))

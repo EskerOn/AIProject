@@ -30,10 +30,11 @@ class Individual:
         self.Period = Period
         self.HiddenLayers = HiddenLayers
         self.FitnessValue = None
+        self.GeneticForm = None
     def settings(self):
         Hlayers = ','.join(map(str, self.HiddenLayers)) 
         return ["-L",str(self.LearningR), "-M", str(self.Momentum), "-N", str(self.Period), "-V", "0", "-S", "0", "-E", "20", "-H", Hlayers]
-    def tostr(self):
+    def __str__(self):
         Hlayers = ','.join(map(str, self.HiddenLayers)) 
         return 'options=["-L","{}", "-M", "{}", "-N", "{}", "-V", "0", "-S", "0", "-E", "20", "-H", "{}"]'.format(self.LearningR, self.Momentum, self.Period, Hlayers)
 
