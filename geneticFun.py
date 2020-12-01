@@ -52,23 +52,57 @@ def randIndividual(): #genera el formato genético, línea 10
         aux.append(random.randrange(SD[i][0]+1))
     return aux
 
-def tobin(data : list):#Muestra la forma binaria
+def tobin(data : list):#Muestra la forma binaria del formato genético
     out = ""
     for i in range(5):
-        aux = bin(data[i])[2:]
-        while(len(aux) < SD[i][1]):
-            aux = "0"+aux
-        out += aux
+        out += tobins(data[i], SD[i][1])
     return(out)
+
+def toformgen(genes : int):
+    out = []
+    for i in range(5):
+        mask = (1 << SD[4-i][1]) - 1
+#        out.append(genes & mask)
+        out.insert(0, genes & mask)
+        genes = genes >> SD[4-i][1]
+    return out
+
+
+def tobins(a : int, size : int): #Muestra la forma binaria de un número
+    out = bin(a)[2:]
+    while(len(out) < size):
+            out = "0"+out
+    return out
 
 def mutation(data : list):#Hace una mutación en un parámetro aleatorio del individuo, trabaja sobre el formato genético
     out = [data[i] for i in range(5)]
     aux = random.randrange(5)
     print("voy a mutar el parámetro: ", aux)
-    out[aux] = out[aux] | pow(2, random.randrange(SD[aux][1]))
+    maskaux = pow(2, SD[aux][1]) - 1
+    mask = pow(2, random.randrange(SD[aux][1]))  
+    if mask & data[aux] > 0:#bit encendido
+        out[aux] = ((data[aux] ^ maskaux) | mask) ^ maskaux
+    else:
+        out[aux] = data[aux] | mask
     while(out[aux] > SD[aux][0]):
-        out[aux] & pow(2, random.randrange(SD[aux][1]))
+        mask = pow(2, random.randrange(SD[aux][1]))  
+        if mask & data[aux] > 0:#bit encendido
+            out[aux] = ((data[aux] ^ maskaux) | mask) ^ maskaux
+        else:
+            out[aux] = data[aux] | mask
     return out
+
+def cruza(padre : list, madre : list):#Recibe dos formatos genéticos y devuelve uno resultado de los dos
+    padres = tobin(padre)
+    madres = tobin(madre)
+    punto = random.randrange(len(padres))
+    print("punto de cruza: ", punto)
+    mask1 = (1 << punto) - 1
+    mask2 = mask1 << punto
+    h1 = (int(padres, 2) & mask1) | (int(madres, 2) & mask2)
+    h2 = (int(padres, 2) & mask2) | (int(madres, 2) & mask1)
+    return toformgen(h1), toformgen(h2)
+        
 
 
 def fitness(data : list): #trabaja sobre el formato genético
@@ -106,11 +140,23 @@ def fitness(data : list): #trabaja sobre el formato genético
 
 initSD()
 print(SD)
+#ejemplos
 aux = randIndividual()
+print("dos individuos aleatorios, ya cumplen con el rango")
 print(aux)
-print(translate(aux))
+aux2 = randIndividual()
+print(aux2)
+print("su representación binaria")
 print(tobin(aux))
-aux2 =  mutation(aux)
-print("mutado\n", aux2)
-print(translate(aux2))
 print(tobin(aux2))
+print("los resultados de la cruza, no necesariamente cimplen el rango")
+h1, h2 = cruza(aux, aux2)
+print(h1)
+print(h2)
+print("su representación binaria")
+print((tobin(h1)))
+print((tobin(h2)))
+m1 = mutation(h1)
+print("mutacion del hijo 1")
+print(m1)
+print(tobin(m1))
