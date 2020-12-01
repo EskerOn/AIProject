@@ -95,10 +95,10 @@ def mutation(data : list):#Hace una mutación en un parámetro aleatorio del ind
 def cruza(padre : list, madre : list):#Recibe dos formatos genéticos y devuelve uno resultado de los dos
     padres = tobin(padre)
     madres = tobin(madre)
-    punto = random.randrange(len(padres))
+    punto = random.randrange(3, len(padres) - 3)
     print("punto de cruza: ", punto)
     mask1 = (1 << punto) - 1
-    mask2 = mask1 << punto
+    mask2 = ((1 << (len(padres)-punto)) - 1) << punto
     h1 = (int(padres, 2) & mask1) | (int(madres, 2) & mask2)
     h2 = (int(padres, 2) & mask2) | (int(madres, 2) & mask1)
     return toformgen(h1), toformgen(h2)
