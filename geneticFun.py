@@ -129,6 +129,19 @@ class GeneticA():
         h2 = (int(padres, 2) & mask2) | (int(madres, 2) & mask1)
         return self.toformgen(h1), self.toformgen(h2)
 
+
+    def cruza2p(self, padre : list, madre : list):#Recibe dos formatos genéticos y devuelve uno resultado de los dos
+        padres = self.tobin(padre)
+        madres = self.tobin(madre)
+        punto = random.randrange(3, len(padres) - 3)#cambiar
+        punto2 = 7#cambiar
+        mask1 = (1 << punto) - 1
+        mask2 = ((1 << (len(padres)-punto)) - 1) << punto
+        mask3 = ((1 << (len(padres)-punto2)) - 1) << punto2
+        h1 = (int(padres, 2) & mask1) | (int(madres, 2) & mask2) | (int(padres, 2) & mask3)
+        h2 = (int(padres, 2) & mask2) | (int(madres, 2) & mask1) | (int(madres, 2) & mask3)
+        return self.toformgen(h1), self.toformgen(h2)
+
     """def pr(self, element):
         val=random.randint(0, self.sumFitness)
         if(random.randint(0, element.FitnessValue);)      
